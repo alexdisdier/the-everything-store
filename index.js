@@ -19,10 +19,12 @@ app.use(bodyParser.json());
 const departmentRoutes = require("./routes/department");
 const categoryRoutes = require("./routes/category");
 const productRoutes = require("./routes/product");
+const reviewRoutes = require("./routes/review");
 
 app.use(departmentRoutes);
 app.use(categoryRoutes);
 app.use(productRoutes);
+app.use(reviewRoutes);
 
 
 /////////////////////////
@@ -37,18 +39,6 @@ mongoose.connect(
     useNewUrlParser: true
   }
 );
-
-///////////////
-// FUNCTIONS //
-///////////////
-
-// Checks if an object is empty
-const isEmpty = obj => {
-  for (let key in obj) {
-    if (obj.hasOwnProperty(key)) return false;
-  }
-  return true;
-};
 
 /////////////////////
 // STARTING SERVER //

@@ -106,10 +106,8 @@ router.get("/product", async (req, res) => {
 router.post("/product/update", async (req, res) => {
   try {
     const product = await Product.findById(req.query.id);
-    // const categoryLink = await Category.findOne({
-    //   title: req.body.category
-    // });
     const oldProduct = product.title;
+
     if (product) {
       product.title = req.body.title;
       product.description = req.body.description;
