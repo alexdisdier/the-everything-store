@@ -7,8 +7,8 @@ const mongoose = require("mongoose");
 const Department = mongoose.model("Department", {
   title: {
     type: String,
-    minLength: 3,
-    maxLength: 20,
+    minlength: 3,
+    maxlength: 20,
     required: true
   }
 });

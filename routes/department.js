@@ -9,7 +9,7 @@ const Department = require('../models/department');
 
 router.use(bodyParser.json());
 
-// Create
+// CREATE
 // params body: title
 router.post("/department/create", async (req, res) => {
   try {
@@ -24,25 +24,25 @@ router.post("/department/create", async (req, res) => {
       await newDepartment.save();
       res.json({
         message: "Department created",
-        title: req.body.title
+        newDepartment
       });
     } else {
       res.status(400).json({
         error: {
-          message: "Department already exists"
+          message: "Department already exists or not respecting models fields"
         }
       });
     }
   } catch (error) {
     res.json({
       error: {
-        message: "An error occurred"
+        message: error.message
       }
     });
   }
 });
 
-// Read All atributs
+// READ
 router.get("/department", async (req, res) => {
   try {
     const departments = await Department.find();
@@ -56,47 +56,54 @@ router.get("/department", async (req, res) => {
   }
 });
 
-// Update
+// UPDATE
 // params query: id of the department to find
 // parmas body: new title
 router.post("/department/update", async (req, res) => {
-  const id = req.query.id;
-  const newTitle = req.body.title;
+
   try {
-    const department = await Department.findById(id);
+    const department = await Department.findById(req.query.id);
     const oldTitle = department.title;
+
     if (department) {
-      department.title = newTitle;
+      department.title = req.body.title;
       await department.save();
       res.json({
         message: `Department ${oldTitle}`,
-        newTitle: newTitle
+        department
       });
     } else {
       res.status(400).json({
         error: {
-          message: "Bad request"
+          message: "Department not found"
         }
       });
     }
   } catch (error) {
-    res.json({
+    res.status(400).json({
       error: {
-        message: "An error occurred"
+        message: error.message
       }
     });
   }
 });
 
-// Delete
+// DELETE
 // params query: id of the category to delete
 router.post("/department/delete", async (req, res) => {
   try {
     const department = await Department.findById(req.query.id);
+    const oldDepartment = department.title;
     if (department) {
       await department.remove();
+      if (category) {
+        const categories = await Category.find({
+          department: req.query.id
+        })
+        await categories.remove();
+      }
       res.json({
-        message: `Deleted ${department.title}, all its categories and products`
+        message: `Deleted ${oldDepartment}, all its categories and products`
       });
     } else {
       res.status(400).json({
@@ -106,7 +113,7 @@ router.post("/department/delete", async (req, res) => {
   } catch (error) {
     res.status(400).json({
       error: {
-        message: "An error occurred"
+        message: error.message
       }
     });
   }

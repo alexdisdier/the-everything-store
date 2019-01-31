@@ -6,6 +6,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const router = express.Router();
 const Product = require('../models/product');
+const Category = require('../models/category');
 
 router.use(bodyParser.json());
 
@@ -16,22 +17,22 @@ router.post("/product/create", async (req, res) => {
     const existingProduct = await Product.findOne({
       title: req.body.title
     });
-    const catLink = await Category.findOne({
-      title: req.body.category
-    });
+    // const catLink = await Category.findOne({
+    //   title: req.body.category
+    // });
     if (existingProduct === null) {
       const newProduct = new Product({
         title: req.body.title,
         description: req.body.description,
         price: req.body.price,
-        category: catLink
+        category: req.body.category
       });
+
       await newProduct.save();
+
       res.json({
         message: `New Product created`,
-        title: req.body.title,
-        description: req.body.description,
-        price: req.body.price
+        newProduct
       });
     } else {
       res.status(400).json({
@@ -43,7 +44,7 @@ router.post("/product/create", async (req, res) => {
   } catch (error) {
     res.status(400).json({
       error: {
-        message: "An error occurred"
+        message: error.message
       }
     });
   }
@@ -76,12 +77,24 @@ router.get("/product", async (req, res) => {
         };
       }
     }
-    const products = await Product.find(filters).populate("category");
+    const search = Product.find(filters).populate("category");
+
+    if (req.query.sort === "price-asc") {
+      search.sort({
+        price: 1
+      });
+    } else if (req.query.sort === "price-desc") {
+      search.sort({
+        price: -1
+      });
+    }
+
+    const products = await search;
     res.json(products);
   } catch (error) {
     res.status(400).json({
       error: {
-        message: "An error occurred"
+        message: error.message
       }
     });
   }
@@ -93,26 +106,25 @@ router.get("/product", async (req, res) => {
 router.post("/product/update", async (req, res) => {
   try {
     const product = await Product.findById(req.query.id);
-    const categoryLink = await Category.findOne({
-      title: req.body.category
-    });
+    // const categoryLink = await Category.findOne({
+    //   title: req.body.category
+    // });
     const oldProduct = product.title;
-    if (product !== null) {
+    if (product) {
       product.title = req.body.title;
       product.description = req.body.description;
       product.price = req.body.price;
-      product.category = categoryLink;
+      product.category = req.body.category;
+
       await product.save();
       res.json({
         message: ` ${oldProduct} has been updated`,
-        title: req.body.title,
-        description: req.body.description,
-        category: req.body.category
+        product
       });
     } else {
       res.status(400).json({
         error: {
-          message: "Bad request"
+          message: "Product not found"
         }
       });
     }
@@ -128,16 +140,20 @@ router.post("/product/update", async (req, res) => {
 router.post("/product/delete", async (req, res) => {
   try {
     const product = await Product.findById(req.query.id);
-    await Product.deleteOne({
-      _id: req.query.id
-    });
-    res.json({
-      message: `Deleted ${product.title}`
-    });
+    if (product) {
+      await product.remove();
+      res.json({
+        message: `Deleted ${product.title}`
+      });
+    } else {
+      res.status(400).json({
+        message: "Product not found"
+      });
+    }
   } catch (error) {
     res.status(400).json({
       error: {
-        message: "An error occurred"
+        message: error.message
       }
     });
   }
