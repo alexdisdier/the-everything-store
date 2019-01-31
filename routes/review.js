@@ -90,8 +90,36 @@ router.post("/review/update", async (req, res) => {
 // params query: id of the review to delete
 router.post("/review/delete", async (req, res) => {
   try {
+
     const review = await Review.findById(req.query.id);
-    if (review) {
+    const product = await Product.findOne({
+      reviews: {
+        $in: [req.query.id]
+      }
+    }).populate("reviews");
+
+    if (review && product) {
+
+      for (let i = 0; i < product.reviews.length; i++) {
+        if (String(product.reviews[i]._id) === req.query.id) {
+          await product.reviews[i].remove();
+        }
+      }
+
+      let totalRating = 0;
+
+      for (let i = 0; i < product.reviews.length; i++) {
+        totalRating += product.reviews[i].rating;
+      }
+
+      if (product.averageRating && product.averageRating > 0) {
+        product.averageRating = (parseFloat(totalRating) / parseFloat(product.reviews.length)).toFixed(2);
+      } else {
+        product.averageRating = req.body.rating;
+      }
+
+      await product.save();
+
       await review.remove();
       res.json({
         message: `Deleted review with the ID:${req.query.id}`
