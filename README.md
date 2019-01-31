@@ -10,8 +10,16 @@ Following a CRUD approach (Create, Read, Update, Delete)
 
 ```bash
 
-doctolib_api
+the-everything-store
 ├── .git
+│   ├── models
+│   │   ├── category.js
+│   │   ├── department.js
+│   │   ├── product.js
+│   ├── routes
+│   │   ├── category.js
+│   │   ├── department.js
+│   │   ├── product.js
 ├── .gitignore
 ├── index.js
 ├── package.json
