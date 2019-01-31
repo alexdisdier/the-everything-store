@@ -1,25 +1,24 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-require('dotenv').config({
-  path: 'variables.env'
-})
+require("dotenv").config({
+  path: "variables.env"
+});
 
 const app = express();
 app.use(bodyParser.json());
 
-const {
-  DATABASE_NAME
-} = process.env;
+const { DATABASE_NAME } = process.env;
 
 // ------------------- //
 // DATABASE CONNECTION //
 // ------------------- //
-// BACKUP AND RESTORE SOURCE: 
+// BACKUP AND RESTORE SOURCE:
 // https://www.digitalocean.com/community/tutorials/how-to-create-and-use-mongodb-backups-on-ubuntu-14-04
-// the everything-store
+// the everything store
 mongoose.connect(
-  `mongodb://localhost/${DATABASE_NAME}`, {
+  `mongodb://localhost/${DATABASE_NAME}`,
+  {
     useNewUrlParser: true
   }
 );
@@ -31,7 +30,7 @@ mongoose.connect(
 // Department Model
 const Department = mongoose.model("Department", {
   title: String
-})
+});
 
 // Category Model
 const Category = mongoose.model("Category", {
@@ -41,7 +40,7 @@ const Category = mongoose.model("Category", {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Department"
   }
-})
+});
 
 // Product Model
 const Product = mongoose.model("Product", {
@@ -52,7 +51,7 @@ const Product = mongoose.model("Product", {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category"
   }
-})
+});
 
 // ------------------- //
 // ROUTES DECLARATION //
@@ -78,13 +77,13 @@ app.post("/department/create", async (req, res) => {
       res.json({
         message: "Department created",
         title: req.body.title
-      })
+      });
     } else {
       res.status(400).json({
         error: {
           message: "Department already exists"
         }
-      })
+      });
     }
   } catch (error) {
     res.json({
@@ -124,13 +123,13 @@ app.post("/department/update", async (req, res) => {
       res.json({
         message: `Department ${oldTitle}`,
         newTitle: newTitle
-      })
+      });
     } else {
       res.status(400).json({
         error: {
           message: "Bad request"
         }
-      })
+      });
     }
   } catch (error) {
     res.json({
@@ -143,7 +142,7 @@ app.post("/department/update", async (req, res) => {
 
 // Delete
 // params query: id of the category to delete
-app.post('/department/delete', async (req, res) => {
+app.post("/department/delete", async (req, res) => {
   try {
     const department = await Department.findById(req.query.id);
     if (department) {
@@ -154,17 +153,16 @@ app.post('/department/delete', async (req, res) => {
     } else {
       res.status(400).json({
         message: "Department not found"
-      })
+      });
     }
-
   } catch (error) {
     res.status(400).json({
       error: {
         message: "An error occurred"
       }
-    })
+    });
   }
-})
+});
 
 //////////////
 // CATEGORY //
@@ -188,11 +186,11 @@ app.post("/category/create", async (req, res) => {
         message: `Category added in ${req.body.departmentId}`,
         title: req.body.title,
         description: req.body.description
-      })
+      });
     } else {
       res.status(400).json({
         message: "Category already exists"
-      })
+      });
     }
   } catch (error) {
     res.json({
@@ -200,7 +198,7 @@ app.post("/category/create", async (req, res) => {
         // message: "An error occurred"
         message: error.message
       }
-    })
+    });
   }
 });
 
@@ -212,14 +210,14 @@ app.get("/category", async (req, res) => {
   } catch (error) {
     res.status(400).json({
       message: "An error occurred"
-    })
+    });
   }
 });
 
 // Update
 // params query: id of the category to find
 // params body: new title, new description, department (family id of the attributed category)
-app.post('/category/update', async (req, res) => {
+app.post("/category/update", async (req, res) => {
   try {
     const category = await Category.findById(req.query.id);
     const departmentLink = await Department.findOne({
@@ -236,24 +234,24 @@ app.post('/category/update', async (req, res) => {
         title: req.body.title,
         description: req.body.description,
         department: req.body.department
-      })
+      });
     } else {
       res.status(400).json({
         error: {
           message: "Bad request"
         }
-      })
+      });
     }
   } catch (error) {
     res.status(400).json({
       message: error.message
-    })
+    });
   }
 });
 
 // Delete
 // params query: id of the category to delete
-app.post('/category/delete', async (req, res) => {
+app.post("/category/delete", async (req, res) => {
   try {
     const category = await Category.findById(req.query.id);
     await Category.deleteOne({
@@ -261,7 +259,7 @@ app.post('/category/delete', async (req, res) => {
     });
     await Product.deleteMany({
       category: req.query.id
-    })
+    });
     res.json({
       message: `Deleted ${category.title} and all its products`
     });
@@ -270,9 +268,9 @@ app.post('/category/delete', async (req, res) => {
       error: {
         message: "An error occurred"
       }
-    })
+    });
   }
-})
+});
 
 //////////////
 // PRODUCT //
@@ -280,14 +278,14 @@ app.post('/category/delete', async (req, res) => {
 
 // Create
 // params body: title, description, price, category (family id of the attributed category)
-app.post('/product/create', async (req, res) => {
+app.post("/product/create", async (req, res) => {
   try {
     const existingProduct = await Product.findOne({
       title: req.body.title
     });
     const catLink = await Category.findOne({
       title: req.body.category
-    })
+    });
     if (existingProduct === null) {
       const newProduct = new Product({
         title: req.body.title,
@@ -301,70 +299,65 @@ app.post('/product/create', async (req, res) => {
         title: req.body.title,
         description: req.body.description,
         price: req.body.price
-      })
+      });
     } else {
       res.status(400).json({
         error: {
           message: "Product already exists"
         }
-      })
+      });
     }
-
   } catch (error) {
     res.status(400).json({
       error: {
         message: "An error occurred"
       }
-    })
+    });
   }
-})
+});
 
 // Read
 // List all products combined
 // params query: category, title, priceMin, priceMax, sort
-// http://localhost:3000/product?priceMin=100
-// http://localhost:3000/product?priceMax=500&category=5c514a244d4cfe2431bb3e71
-// http://localhost:3000/product?sort=price-asc&title=playstation
 app.get("/product", async (req, res) => {
   try {
-    const where = {};
+    const filters = {};
 
     if (req.query.categoryId) {
-      where.category = req.query.categoryId;
+      filters.category = req.query.categoryId;
     }
     if (req.query.title) {
-      where.title = new RegExp(req.query.title, "i"); // trouve une partie du titre sans tenir compte de la casse
+      filters.title = new RegExp(req.query.title, "i");
     }
     if (req.query.priceMin) {
-      where.price = {
+      filters.price = {
         $gte: req.query.priceMin
       };
-      //   where.price.$gte = req.query.priceMin; // Ne peut pas créer une propriété $gte si l'objet 'price' n'existe pas déjà
     }
     if (req.query.priceMax) {
-      if (where.price) {
-        where.price.$lte = req.query.priceMax;
+      if (filters.price) {
+        filters.price.$lte = req.query.priceMax;
       } else {
-        where.price = {
+        filters.price = {
           $lte: req.query.priceMax
         };
       }
     }
-    const products = await Product.find(where).populate("category");
+    const products = await Product.find(filters).populate("category");
     res.json(products);
   } catch (error) {
     res.status(400).json({
       error: {
         message: "An error occurred"
       }
-    })
+    });
   }
 });
 
 // Update
 // params query: id of the product to update
 // params body: new title, new description, new price, new category
-app.post('/product/update', async (req, res) => {
+app.post("/product/update", async (req, res) => {
   try {
     const product = await Product.findById(req.query.id);
     const categoryLink = await Category.findOne({
@@ -382,24 +375,24 @@ app.post('/product/update', async (req, res) => {
         title: req.body.title,
         description: req.body.description,
         category: req.body.category
-      })
+      });
     } else {
       res.status(400).json({
         error: {
           message: "Bad request"
         }
-      })
+      });
     }
   } catch (error) {
     res.status(400).json({
       message: error.message
-    })
+    });
   }
 });
 
 // Delete
 // params query: id of the product to delete
-app.post('/product/delete', async (req, res) => {
+app.post("/product/delete", async (req, res) => {
   try {
     const product = await Product.findById(req.query.id);
     await Product.deleteOne({
@@ -413,9 +406,9 @@ app.post('/product/delete', async (req, res) => {
       error: {
         message: "An error occurred"
       }
-    })
+    });
   }
-})
+});
 
 // --------- //
 // FUNCTIONS //
@@ -424,18 +417,17 @@ app.post('/product/delete', async (req, res) => {
 // Checks if an object is empty
 const isEmpty = obj => {
   for (let key in obj) {
-    if (obj.hasOwnProperty(key))
-      return false;
+    if (obj.hasOwnProperty(key)) return false;
   }
   return true;
-}
+};
 
 // ----------------- //
 // DEMARRAGE SERVEUR //
 // ----------------- //
 
 // Manage pages not found
-app.all("*", function (req, res) {
+app.all("*", function(req, res) {
   res.status(400).send("Page not found");
 });
 
