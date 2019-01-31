@@ -20,9 +20,7 @@ app.use(departmentRoutes);
 app.use(categoryRoutes);
 app.use(productRoutes);
 
-const {
-  DATABASE_NAME
-} = process.env;
+const { DATABASE_NAME } = process.env;
 
 /////////////////////////
 // DATABASE CONNECTION //
@@ -32,7 +30,8 @@ const {
 // https://www.digitalocean.com/community/tutorials/how-to-create-and-use-mongodb-backups-on-ubuntu-14-04
 // the everything store
 mongoose.connect(
-  `mongodb://localhost/${DATABASE_NAME}`, {
+  `mongodb://localhost/${DATABASE_NAME}`,
+  {
     useNewUrlParser: true
   }
 );
@@ -54,7 +53,7 @@ const isEmpty = obj => {
 /////////////////////
 
 // Manage pages not found
-app.all("*", function (req, res) {
+app.all("*", function(req, res) {
   res.status(400).send("Page not found");
 });
 

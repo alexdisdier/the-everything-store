@@ -1,6 +1,6 @@
 # Synopsis
 
-This is a RESTFUL APi for an online store.
+This is an APi for an online store.
 
 ### Guidelines  🚧
 
