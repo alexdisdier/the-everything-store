@@ -16,10 +16,12 @@ the-everything-store
 │   │   ├── category.js
 │   │   ├── department.js
 │   │   ├── product.js
+│   │   ├── review.js
 │   ├── routes
 │   │   ├── category.js
 │   │   ├── department.js
 │   │   ├── product.js
+│   │   ├── review.js
 ├── .gitignore
 ├── index.js
 ├── package.json

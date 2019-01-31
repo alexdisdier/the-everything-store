@@ -77,7 +77,7 @@ router.get("/product", async (req, res) => {
         };
       }
     }
-    const search = Product.find(filters).populate("category");
+    const search = Product.find(filters).populate("category").populate("reviews");
 
     if (req.query.sort === "price-asc") {
       search.sort({
