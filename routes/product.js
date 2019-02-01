@@ -7,19 +7,18 @@ const bodyParser = require('body-parser');
 const router = express.Router();
 const Product = require('../models/product');
 const Category = require('../models/category');
+const ROUTE = 'product';
 
 router.use(bodyParser.json());
 
 // CREATE
 // params body: title, description, price, category (family id of the attributed category)
-router.post("/product/create", async (req, res) => {
+router.post(`/${ROUTE}/create`, async (req, res) => {
   try {
     const existingProduct = await Product.findOne({
       title: req.body.title
     });
-    // const catLink = await Category.findOne({
-    //   title: req.body.category
-    // });
+
     if (existingProduct === null) {
       const newProduct = new Product({
         title: req.body.title,
@@ -52,8 +51,8 @@ router.post("/product/create", async (req, res) => {
 
 // READ
 // List all products combined
-// params query: category, title, priceMin, priceMax, sort
-router.get("/product", async (req, res) => {
+// params query: category, title, priceMin, priceMax, sort, rating, comment, username
+router.get(`/${ROUTE}`, async (req, res) => {
   try {
     const filters = {};
 
@@ -77,6 +76,7 @@ router.get("/product", async (req, res) => {
         };
       }
     }
+
     const search = Product.find(filters).populate("category").populate("reviews");
 
     if (req.query.sort === "price-asc") {
@@ -89,7 +89,18 @@ router.get("/product", async (req, res) => {
       });
     }
 
+    if (req.query.sort === "rating-asc") {
+      search.sort({
+        averageRating: 1
+      });
+    } else if (req.query.sort === "rating-desc") {
+      search.sort({
+        averageRating: -1
+      });
+    }
+
     const products = await search;
+
     res.json(products);
   } catch (error) {
     res.status(400).json({
@@ -103,7 +114,7 @@ router.get("/product", async (req, res) => {
 // UPDATE
 // params query: id of the product to update
 // params body: new title, new description, new price, new category
-router.post("/product/update", async (req, res) => {
+router.post(`/${ROUTE}/update`, async (req, res) => {
   try {
     const product = await Product.findById(req.query.id);
     const oldProduct = product.title;
@@ -135,7 +146,7 @@ router.post("/product/update", async (req, res) => {
 
 // DELETE
 // params query: id of the product to delete
-router.post("/product/delete", async (req, res) => {
+router.post(`/${ROUTE}/delete`, async (req, res) => {
   try {
     const product = await Product.findById(req.query.id);
     if (product) {

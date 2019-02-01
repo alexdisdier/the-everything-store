@@ -6,12 +6,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const router = express.Router();
 const Department = require('../models/department');
+const ROUTE = "department";
 
 router.use(bodyParser.json());
 
 // CREATE
 // params body: title
-router.post("/department/create", async (req, res) => {
+router.post(`/${ROUTE}/create`, async (req, res) => {
   try {
     const existingDepartment = await Department.findOne({
       title: req.body.title
@@ -43,7 +44,7 @@ router.post("/department/create", async (req, res) => {
 });
 
 // READ
-router.get("/department", async (req, res) => {
+router.get(`/${ROUTE}`, async (req, res) => {
   try {
     const departments = await Department.find();
     res.json(departments);
@@ -59,7 +60,7 @@ router.get("/department", async (req, res) => {
 // UPDATE
 // params query: id of the department to find
 // parmas body: new title
-router.post("/department/update", async (req, res) => {
+router.post(`/${ROUTE}/update`, async (req, res) => {
 
   try {
     const department = await Department.findById(req.query.id);
@@ -90,7 +91,7 @@ router.post("/department/update", async (req, res) => {
 
 // DELETE
 // params query: id of the category to delete
-router.post("/department/delete", async (req, res) => {
+router.post(`/${ROUTE}/delete`, async (req, res) => {
   try {
     const department = await Department.findById(req.query.id);
     const oldDepartment = department.title;

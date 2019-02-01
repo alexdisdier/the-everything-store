@@ -7,12 +7,13 @@ const bodyParser = require('body-parser');
 const router = express.Router();
 const Review = require('../models/review');
 const Product = require('../models/product');
+const ROUTE = "review";
 
 router.use(bodyParser.json());
 
 // CREATE
 // params body: id of product to review, rating, comment, username
-router.post("/review/create", async (req, res) => {
+router.post(`/${ROUTE}/create`, async (req, res) => {
   try {
     const product = await Product.findById(req.body.product).populate("reviews");
 
@@ -60,7 +61,7 @@ router.post("/review/create", async (req, res) => {
 // UPDATE
 // params query: id of the Review to update
 // params body: rating, comment
-router.post("/review/update", async (req, res) => {
+router.post(`/${ROUTE}/update`, async (req, res) => {
   try {
     const review = await Review.findById(req.query.id);
     if (review) {
@@ -88,7 +89,7 @@ router.post("/review/update", async (req, res) => {
 
 // DELETE
 // params query: id of the review to delete
-router.post("/review/delete", async (req, res) => {
+router.post(`/${ROUTE}/delete`, async (req, res) => {
   try {
 
     const review = await Review.findById(req.query.id);

@@ -7,12 +7,13 @@ const bodyParser = require('body-parser');
 const router = express.Router();
 const Category = require('../models/category');
 const Department = require('../models/department');
+const ROUTE = "category";
 
 router.use(bodyParser.json());
 
 // CREATE
 // params body: title, description, department (family id of the attributed category)
-router.post("/category/create", async (req, res) => {
+router.post(`/${ROUTE}/create`, async (req, res) => {
   try {
     const existingCat = await Category.findOne({
       title: req.body.title
@@ -45,7 +46,7 @@ router.post("/category/create", async (req, res) => {
 });
 
 // READ
-router.get("/category", async (req, res) => {
+router.get(`/${ROUTE}`, async (req, res) => {
   try {
     const categories = await Category.find().populate("department");
 
@@ -60,7 +61,7 @@ router.get("/category", async (req, res) => {
 // UPDATE
 // params query: id of the category to find
 // params body: new title, new description, department (family id of the attributed category)
-router.post("/category/update", async (req, res) => {
+router.post(`/${ROUTE}/update`, async (req, res) => {
   try {
     const category = await Category.findById(req.query.id);
     const department = await Department.findById(req.body.department);
@@ -92,7 +93,7 @@ router.post("/category/update", async (req, res) => {
 
 // DELETE
 // params query: id of the category to delete
-router.post("/category/delete", async (req, res) => {
+router.post(`/${ROUTE}/delete`, async (req, res) => {
   try {
     const category = await Category.findById(req.query.id);
     if (category) {
