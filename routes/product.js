@@ -5,8 +5,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const router = express.Router();
+const faker = require('faker');
+
 const Product = require('../models/product');
 const Category = require('../models/category');
+
 const ROUTE = 'product';
 
 router.use(bodyParser.json());
@@ -51,7 +54,7 @@ router.post(`/${ROUTE}/create`, async (req, res) => {
 
 // READ
 // List all products combined
-// params query: category, title, priceMin, priceMax, sort, rating, comment, username
+// params query: category, title, priceMin, priceMax, sort, rating, comment, username, page
 router.get(`/${ROUTE}`, async (req, res) => {
   try {
     const filters = {};
@@ -76,9 +79,15 @@ router.get(`/${ROUTE}`, async (req, res) => {
         };
       }
     }
-
-    const search = Product.find(filters).populate("category").populate("reviews");
-
+    const perPage = 5;
+    const page = Math.max(0, req.query.page);
+    const search = Product.find(filters)
+      .populate("category")
+      .populate("reviews")
+    if (page) {
+      search.limit(perPage)
+        .skip(perPage * page);
+    }
     if (req.query.sort === "price-asc") {
       search.sort({
         price: 1
@@ -169,3 +178,17 @@ router.post(`/${ROUTE}/delete`, async (req, res) => {
 });
 
 module.exports = router;
+
+// Faker.js
+// const productArr = [];
+// for (let i = 0; i < 3; i++) {
+//   productArr.push({
+//     product: faker.fake("{{commerce.product}}"),
+//     department: faker.fake("{{commerce.department}}"),
+//     productName: faker.fake("{{commerce.productName}}"),
+//     price: faker.fake("{{commerce.price}}"),
+//     productAdjective: faker.fake("{{commerce.productAdjective}}"),
+//     productMaterial: faker.fake("{{commerce.productMaterial}}")
+//   });
+// }
+// console.log(productArr);

@@ -43,8 +43,10 @@ the-everything-store
 ## Dependencies
 
 - [body-parser](https://www.npmjs.com/package/body-parser)
-- [Nodemon](https://www.npmjs.com/package/nodemon)
+- [nodemon](https://www.npmjs.com/package/nodemon)
+- [express](https://www.npmjs.com/package/express)
 - [mongoose](https://www.npmjs.com/package/mongoose)
+- [faker](https://www.npmjs.com/package/faker)
 
 ## Acknowledgments
 
