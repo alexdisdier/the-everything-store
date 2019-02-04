@@ -17,6 +17,7 @@ const ROUTE = "department";
 router.post(`/${ROUTE}/create`, async (req, res) => {
 
   try {
+    console.log('in create');
     const existingDepartment = await Department.findOne({
       title: req.body.title
     });
@@ -102,7 +103,7 @@ router.post(`/${ROUTE}/delete`, async (req, res) => {
       const categories = await Category.find({
         department: req.query.id
       })
-      await categories.remove();
+      // await categories.remove();
       await department.remove();
       res.json({
         message: `Deleted ${oldDepartment}, all its categories and products`
