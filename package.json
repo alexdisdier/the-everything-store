@@ -1,13 +1,14 @@
 {
   "name": "online-shopping",
   "version": "1.0.0",
-  "description": "",
+  "description": "An online shopping store model",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "devServer": "nodemon index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Alex Disdier",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",

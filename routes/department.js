@@ -3,16 +3,19 @@
 //////////////////////
 
 const express = require('express');
-const bodyParser = require('body-parser');
 const router = express.Router();
-const Department = require('../models/department');
-const ROUTE = "department";
+const faker = require('faker');
 
-router.use(bodyParser.json());
+const Product = require("../models/product");
+const Department = require("../models/department");
+const Category = require("../models/category");
+
+const ROUTE = "department";
 
 // CREATE
 // params body: title
 router.post(`/${ROUTE}/create`, async (req, res) => {
+
   try {
     const existingDepartment = await Department.findOne({
       title: req.body.title
@@ -119,5 +122,26 @@ router.post(`/${ROUTE}/delete`, async (req, res) => {
     });
   }
 });
+
+// FAKER ROUTE TO GENERATE DEPARTMENTS
+// router.post(`/${ROUTE}/create-faker`, async (req, res) => {
+//   const departmentNum = 10;
+//   try {
+//     for (let i = 0; i < departmentNum; i++) {
+//       const newDepartment = new Department({
+//         title: faker.fake("{{commerce.department}}")
+//       });
+//       await newDepartment.save();
+//     }
+//     res.json({
+//       message: `${departmentNum} departments have been created`
+//     })
+
+//   } catch (error) {
+//     res.status(400).json({
+//       error: error.message
+//     })
+//   }
+// });
 
 module.exports = router;

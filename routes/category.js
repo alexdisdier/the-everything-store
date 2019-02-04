@@ -3,13 +3,13 @@
 ////////////////////
 
 const express = require('express');
-const bodyParser = require('body-parser');
 const router = express.Router();
+
+const Product = require("../models/product");
 const Category = require('../models/category');
 const Department = require('../models/department');
-const ROUTE = "category";
 
-router.use(bodyParser.json());
+const ROUTE = "category";
 
 // CREATE
 // params body: title, description, department (family id of the attributed category)
@@ -49,7 +49,6 @@ router.post(`/${ROUTE}/create`, async (req, res) => {
 router.get(`/${ROUTE}`, async (req, res) => {
   try {
     const categories = await Category.find().populate("department");
-
     res.json(categories);
   } catch (error) {
     res.status(400).json({

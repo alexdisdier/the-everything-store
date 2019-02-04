@@ -3,16 +3,14 @@
 ///////////////////
 
 const express = require('express');
-const bodyParser = require('body-parser');
 const router = express.Router();
 const faker = require('faker');
 
-const Product = require('../models/product');
-const Category = require('../models/category');
+const Product = require("../models/product");
+const Department = require("../models/department");
+const Category = require("../models/category");
 
 const ROUTE = 'product';
-
-router.use(bodyParser.json());
 
 // CREATE
 // params body: title, description, price, category (family id of the attributed category)
@@ -56,6 +54,7 @@ router.post(`/${ROUTE}/create`, async (req, res) => {
 // List all products combined
 // params query: category, title, priceMin, priceMax, sort, rating, comment, username, page
 router.get(`/${ROUTE}`, async (req, res) => {
+
   try {
     const filters = {};
 
@@ -79,15 +78,20 @@ router.get(`/${ROUTE}`, async (req, res) => {
         };
       }
     }
-    const perPage = 5;
-    const page = Math.max(0, req.query.page);
+
     const search = Product.find(filters)
       .populate("category")
       .populate("reviews")
-    if (page) {
-      search.limit(perPage)
-        .skip(perPage * page);
+
+    if (req.query.page) {
+      const page = req.query.page;
+      const limit = 6; // 6 results per page
+
+      search.limit(limit); // Limit to X results
+      search.skip(limit * (page - 1)); // Limit to X results
+      // skip must be at 0 for the first page or we'll omit the first limit products. 
     }
+
     if (req.query.sort === "price-asc") {
       search.sort({
         price: 1
@@ -177,18 +181,29 @@ router.post(`/${ROUTE}/delete`, async (req, res) => {
   }
 });
 
-module.exports = router;
+// FAKER ROUTE TO GENERATE DEPARTMENTS
+// router.post(`/${ROUTE}/create-faker`, async (req, res) => {
+//   const productNum = 100;
+//   try {
+//     for (let i = 0; i < productNum; i++) {
+//       const newProduct = new Product({
+//         title: faker.fake("{{commerce.productName}}"),
+//         description: "default description",
+//         price: faker.fake("{{commerce.price}}"),
+//         category: "Accessories",
+//       });
 
-// Faker.js
-// const productArr = [];
-// for (let i = 0; i < 3; i++) {
-//   productArr.push({
-//     product: faker.fake("{{commerce.product}}"),
-//     department: faker.fake("{{commerce.department}}"),
-//     productName: faker.fake("{{commerce.productName}}"),
-//     price: faker.fake("{{commerce.price}}"),
-//     productAdjective: faker.fake("{{commerce.productAdjective}}"),
-//     productMaterial: faker.fake("{{commerce.productMaterial}}")
-//   });
-// }
-// console.log(productArr);
+//       await newProduct.save();
+//     }
+//     res.json({
+//       message: `${productNum} products have been created`
+//     })
+
+//   } catch (error) {
+//     res.status(400).json({
+//       error: error.message
+//     })
+//   }
+// });
+
+module.exports = router;
