@@ -2,7 +2,7 @@
 
 This is an APi for an online store.
 
-### Guidelines  🚧
+### Guidelines  
 
 Following a CRUD approach (Create, Read, Update, Delete)
 
@@ -27,6 +27,20 @@ the-everything-store
 ├── package.json
 └── README.md
 
+```
+
+## Back up
+
+- export backup from mongodb in root directory.
+
+```bash
+mongodump --db dbName  --out export-data
+```
+
+- Create a database user in mLab (Heroku Add-on)
+
+```bash
+mongorestore -h ****** -d ******* -u <user> -p <password> ./export-data/dbName/
 ```
 
 ## Built With

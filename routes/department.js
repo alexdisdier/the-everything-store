@@ -99,13 +99,11 @@ router.post(`/${ROUTE}/delete`, async (req, res) => {
     const department = await Department.findById(req.query.id);
     const oldDepartment = department.title;
     if (department) {
+      const categories = await Category.find({
+        department: req.query.id
+      })
+      await categories.remove();
       await department.remove();
-      if (category) {
-        const categories = await Category.find({
-          department: req.query.id
-        })
-        await categories.remove();
-      }
       res.json({
         message: `Deleted ${oldDepartment}, all its categories and products`
       });
@@ -128,10 +126,17 @@ router.post(`/${ROUTE}/delete`, async (req, res) => {
 //   const departmentNum = 10;
 //   try {
 //     for (let i = 0; i < departmentNum; i++) {
-//       const newDepartment = new Department({
+//       const department = await Department.findOne({
 //         title: faker.fake("{{commerce.department}}")
 //       });
-//       await newDepartment.save();
+//       if (department) {
+//         console.log("department already exist");
+//       } else {
+//         const newDepartment = new Department({
+//           title: faker.fake("{{commerce.department}}")
+//         });
+//         await newDepartment.save();
+//       }
 //     }
 //     res.json({
 //       message: `${departmentNum} departments have been created`

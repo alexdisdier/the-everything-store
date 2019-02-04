@@ -40,7 +40,7 @@ require("./models/review");
 
 // HOMEPAGE
 app.get('/', (req, res) => {
-  res.json(`
+  res.send(`
     LINKS to other routes:
     1. View Departments: /department
     2. View Category: /category
