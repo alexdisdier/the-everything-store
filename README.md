@@ -1,6 +1,6 @@
 # Synopsis
 
-This is an APi for an online store.
+This is an APi for an online store. [check out the api](https://the-everything-store.herokuapp.com/)
 
 ### Guidelines  
 
